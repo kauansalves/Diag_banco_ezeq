@@ -1,0 +1,83 @@
+INSERT INTO cliente (cpf, email)
+VALUES
+('12345678901', 'joao@gmail.com'),
+('12345678902', 'maria@gmail.com');
+
+INSERT INTO agencia (numero)
+VALUES ('0001')
+
+INSERT INTO tipo_operacao (codigo)
+VALUES
+('deposito')
+
+INSERT INTO conta (
+    id_cliente,
+    id_agencia,
+    numero,
+    saldo
+)
+VALUES
+(
+    (SELECT id_cliente FROM cliente WHERE cpf = '12345678901'),
+    (SELECT id_agencia FROM agencia WHERE numero = '0001'),
+    '000000001',
+    1500.00
+)
+
+INSERT INTO conta (
+    id_cliente,
+    id_agencia,
+    numero,
+    saldo
+)
+VALUES
+(
+    (SELECT id_cliente FROM cliente WHERE cpf = '12345678902'),
+    (SELECT id_agencia FROM agencia WHERE numero = '0001'),
+    '000000002',
+    800.00
+);
+
+INSERT INTO favorito (id_cliente, id_conta)
+VALUES (
+    (SELECT id_cliente FROM cliente WHERE cpf = '12345678901'),
+    (SELECT id_conta FROM conta WHERE numero = '000000002')
+);
+
+INSERT INTO transferencia (
+    id_conta_origem,
+    id_conta_destino,
+    valor,
+    descricao
+)
+VALUES (
+    (SELECT id_conta FROM conta WHERE numero = '000000001'),
+    (SELECT id_conta FROM conta WHERE numero = '000000002'),
+    200.00,
+    'Transferencia para Maria'
+);
+
+
+INSERT INTO operacao (
+    tipo_operacao,
+    id_conta,
+    id_transferencia,
+    valor,
+    saldo_apos,
+    descricao
+)
+VALUES (
+    (SELECT tipo_operacao FROM tipo_operacao WHERE codigo = 'deposito'),
+    (SELECT id_conta FROM conta WHERE numero = '000000001'),
+    (SELECT id_transf FROM transferencia WHERE descricao = 'Transferencia para Maria' LIMIT 1),
+    200.00,
+    1300.00,
+    'Transferencia enviada para Maria'
+)
+
+INSERT INTO login (id_cliente, token, expiracao)
+VALUES (
+    (SELECT id_cliente FROM cliente WHERE cpf = '12345678901'),
+    1,
+    CURRENT_TIMESTAMP
+)
